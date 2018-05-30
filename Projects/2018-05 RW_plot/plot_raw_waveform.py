@@ -23,12 +23,12 @@ time=numpy.arange(ms_data[0].stats.starttime.second, ms_data[0].stats.endtime.se
 
 #%%
 
-plt.figure(1,figsize=(3.9,6.3))
+plt.figure(1,figsize=(16,9))
 
 plt.subplot(1,3,1)
 plt.title('Z channel', fontweight='semibold', size='medium')
 for gph_index in range(69):
-    plt.plot(time,0.65*ms_data[gph_index].data+gph_index*numpy.ones(len(ms_data[0])),'r',lw=0.15)
+    plt.plot(time,0.65*ms_data[gph_index].data+gph_index*numpy.ones(len(ms_data[0])),'r',lw=0.4)
   
 plt.ylabel('Gph ID',fontweight='medium')
 plt.ylim(-1,69)
@@ -39,7 +39,7 @@ plt.xticks([28,30,32,34],size='x-small')
 plt.subplot(1,3,2)
 plt.title('H1 channel', fontweight='semibold', size='medium')
 for gph_index in range(69):
-    plt.plot(time,0.65*ms_data[gph_index+69].data+gph_index*numpy.ones(len(ms_data[0])),'b',lw=0.15)
+    plt.plot(time,0.65*ms_data[gph_index+69].data+gph_index*numpy.ones(len(ms_data[0])),'b',lw=0.4)
 
 plt.yticks([])
 plt.ylim(-1,69)
@@ -50,7 +50,7 @@ plt.xticks([28,30,32,34],size='x-small')
 plt.subplot(1,3,3)
 plt.title('H2 channel', fontweight='semibold', size='medium')
 for gph_index in range(69):
-    plt.plot(time,0.65*ms_data[gph_index+69*2].data+gph_index*numpy.ones(len(ms_data[0])),'g',lw=0.15)
+    plt.plot(time,0.65*ms_data[gph_index+69*2].data+gph_index*numpy.ones(len(ms_data[0])),'g',lw=0.4)
 
 plt.yticks([])
 plt.ylim(-1,69)
@@ -59,6 +59,6 @@ plt.xticks([28,30,32,34],size='x-small')
 
 plt.tight_layout()
 #plt.savefig('raw_waveform.eps',format='eps',dpi=300) # For high image qualify
-plt.savefig('raw_waveform.jpg',format='jpg',dpi=100) # For low image qualify (demostration)
+plt.savefig('raw_waveform.jpg',format='jpg',dpi=300) # For low image qualify (demostration)
 plt.show()
 plt.close()
