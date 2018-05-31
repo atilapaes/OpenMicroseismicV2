@@ -5,7 +5,8 @@ Created on Tue Dec 12 15:35:50 2017
 
 @author: atilapaes
 
-This module contains tools for preparing the input files to be used in a OpenMicroseismic project
+This module contains tools for deal with catalog of microseismic files
+
 """
 
 #%% Load libs
@@ -92,6 +93,37 @@ def time_window2file_name(time2search,file_catalog):
 
     return(file_list)
     
+#%%
+def time2file_name(catalog_time_n_files,input_time,sec_before=15,sec_after=10):
+    """
+    Created on May 31 01:20, Last update on May 31 01:25
+    Used on project(s): GRP_repicking
+
+    This module get a input_time and returns which file(s) contain(s) the 
+    time window from [input_time - sec_before, input_time - sec_after]
+    
+    INPUTS:
+    catalog_time_n_files: contains 2 columns: file_name(str), date_time(pandas datetime type)
+    input_time: pandas.tslib.Timestamp or Obspy datetime
+    sec_before: number of seconds before input time (int)
+    sec_after: number of seconds after input time (int)
+    
+    OUTPUT:
+    files2load: list of 1 or 2 file names to load
+    """
+
+    # Step 1: Get catalog index for input_time.
+    catalog_index=catalog_time_n_files[(catalog_time_n_files['date_time']>=input_time) & (catalog_time_n_files['date_time']<input_time+59)].index[0]
+
+    # STEP 2: Get file name of specified index and a secondary file (before or after) if necessary
+    if input_time.second < sec_before:
+        files2load=[catalog_time_n_files.file_name[catalog_index-1],catalog_time_n_files.file_name[catalog_index]]
+    elif input_time.second > sec_after:
+        files2load=[catalog_time_n_files.file_name[catalog_index],catalog_time_n_files.file_name[catalog_index+1]]
+    else:
+        files2load=[catalog_time_n_files.file_name[catalog_index]]
+return(files2load)
+
 
 ##############################################################################
 ##############################################################################
