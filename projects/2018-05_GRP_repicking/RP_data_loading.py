@@ -30,7 +30,8 @@ import pandas, obspy # General Libs
 
 import om_load_data, om_catalog # O.M. shared modules
 
-import project_files.project_info # Project info from nested folder
+import project_files.project_info # Project info from nested folder (must create a blank __init__.py in all folders)
+
 
 obspy.core.utcdatetime.UTCDateTime.DEFAULT_PRECISION = 3 # Define time resolution as 0.001 seconds
 
@@ -87,5 +88,24 @@ def rp_data_loading(input_time,sec_before,sec_after,catalog_time_n_files,bandpas
 
 #%% Commands to test the function from Step 3. It is working so far.
 
-input_time=obspy.core.utcdatetime.UTCDateTime('2016-11-20T06:20:30')
-ms_data=rp_data_loading(input_time,sec_before=15,sec_after=10,catalog_time_n_files=catalog_time_n_files,bandpass_freqs=[10,200])
+#input_time=obspy.core.utcdatetime.UTCDateTime('2016-11-20T06:20:30')
+#ms_data=rp_data_loading(input_time,sec_before=15,sec_after=10,catalog_time_n_files=catalog_time_n_files,bandpass_freqs=[10,200])
+
+#%%
+def define_files2load(file_name,sec):
+    """
+    Returns the secondary file to load depenseing on the sec from the event catalog
+    
+    OBS: Not included the mechanism to prevent loading before catalog initialization of after catalog end
+    """    
+    df_files=pandas.read_csv('project_files/catalog_time_n_files.csv') # Complete list of file from G.R.P. catalog    
+    file_list=[file_name] # Primary file
+        
+    if sec + project_files.project_info.sec2load_after > 60:        
+        file_list.append(df_files.file_name[1+df_files[df_files['file_name']==file_name].index[0]])
+    elif sec - project_files.project_info.sec2load_before < 0:
+        file_list.append(df_files.file_name[-1+df_files[df_files['file_name']==file_name].index[0]])
+    
+    return(file_list)
+
+#%%
