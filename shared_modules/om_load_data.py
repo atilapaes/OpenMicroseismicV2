@@ -141,9 +141,9 @@ def load_ms_data_v03(file_name,time2search):
 
 #%% ###########################################################################
 # Developed for om_ATP V03
-def load_sequential_files(files2load, input_time, sec_before, sec_after,bandpass_freqs,folder):
+def load_sequential_files(files2load, input_sec, sec_before, sec_after,bandpass_freqs,folder):
     """
-    Created on May 31 01:40, Last update on May 31 01:51
+    Created on May 31 01:40, Last update on Jun 09, 2018 02:45
     Used on project(s): GRP_repicking
 
     This module is used to quickly import one or two M.S. file(s) from a list,
@@ -152,7 +152,7 @@ def load_sequential_files(files2load, input_time, sec_before, sec_after,bandpass
     INPUTS:
     files2load: list of 1 or 2 file names to load
     folder: the path to the SEG2, SGY or DAT files
-    input_time: central time of the window
+    input_sec: from G.R.P. catalog
     sec_before: Number of seconds before input_time to slice
     sec_after: Number of seconds after input_time to slice
     bandpass_freqs: list of two integers to use as bandpass filter (in Hz). Ex: [30,200]
@@ -163,13 +163,15 @@ def load_sequential_files(files2load, input_time, sec_before, sec_after,bandpass
     
     # Load single or both files
     ms_data=obspy.read(folder+files2load[0])
+    start_time = ms_data[0].stats.starttime
+
     if len(files2load)==2:
         ms_data2=obspy.read(folder+files2load[1])       
         for channel in range(len(ms_data)):
             ms_data[channel] += ms_data2[channel]
 
     # Slice
-    ms_data=ms_data.slice(input_time-sec_before,input_time+sec_after)
+    ms_data=ms_data.slice(start_time + input_sec - sec_before, start_time + input_sec + sec_after)
     
     # Filter
     ms_data.filter('bandpass', freqmin=bandpass_freqs[0], freqmax=bandpass_freqs[1], corners=4, zerophase=True)
