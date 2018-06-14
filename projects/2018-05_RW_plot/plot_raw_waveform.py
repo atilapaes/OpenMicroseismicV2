@@ -33,7 +33,7 @@ for gph_index in range(69):
 plt.ylabel('Gph ID',fontweight='medium')
 plt.ylim(-1,69)
 plt.xlabel('Time (s)',fontweight='medium')
-plt.xticks([28,30,32,34],size='x-small')
+plt.xticks([28,29,30,31,32,33,34],size='x-small')
 
 
 plt.subplot(1,3,2)
@@ -44,7 +44,7 @@ for gph_index in range(69):
 plt.yticks([])
 plt.ylim(-1,69)
 plt.xlabel('Time (s)',fontweight='medium')
-plt.xticks([28,30,32,34],size='x-small')
+plt.xticks([28,29,30,31,32,33,34],size='x-small')
 
 
 plt.subplot(1,3,3)
@@ -55,10 +55,46 @@ for gph_index in range(69):
 plt.yticks([])
 plt.ylim(-1,69)
 plt.xlabel('Time (s)',fontweight='medium')
-plt.xticks([28,30,32,34],size='x-small')
+plt.xticks([28,29,30,31,32,33,34],size='x-small')
 
 plt.tight_layout()
 #plt.savefig('raw_waveform.eps',format='eps',dpi=300) # For high image qualify
 plt.savefig('raw_waveform.jpg',format='jpg',dpi=300) # For low image qualify (demostration)
 plt.show()
 plt.close()
+
+#%%
+
+plt.figure(2,figsize=(8,3))
+plt.subplot(1,2,1)
+
+for gph_index in range(69):
+    plt.plot(0.65*ms_data[gph_index].data+gph_index*numpy.ones(len(ms_data[0])),time,'r',lw=0.4)
+  
+plt.xlabel('Z',fontweight='bold')
+plt.xlim(-1,69)
+plt.ylim(29,32)
+plt.ylabel('Time (s)')#,fontweight='small')
+plt.yticks([29,30,31,32],size='x-small')
+plt.gca().invert_yaxis()
+plt.xticks([])
+
+plt.subplot(1,2,2)
+for gph_index in range(69):
+    plt.plot(0.65*ms_data[gph_index+69].data+gph_index*numpy.ones(len(ms_data[0])),time,'b',lw=0.4)
+
+plt.yticks([])
+plt.xlim(-1,69)
+plt.ylim(29,32)
+plt.xlabel('H1',fontweight='bold')
+plt.yticks([29,30,31,32],size='x-small')
+plt.yticks([])
+plt.xticks([])
+plt.gca().invert_yaxis()
+
+
+plt.tight_layout()
+plt.savefig('raw_waveform_v2.tiff',format='tiff',dpi=300)
+plt.show()
+plt.close()
+#%%
