@@ -28,3 +28,22 @@ def cf_es_selec_gph(ms_data,catalog_gph_3c):
     return(es)
 
 #%%
+def cf_moving_avg(signal,samples=100):
+    """
+    This function calculates the moving average of a provided 1-C signal (array).
+        
+    """
+    signal_ma = numpy.zeros((len(signal),))
+    
+    #Regular signal
+    for index in range(samples//2, len(signal)-samples//2):
+        signal_ma[index] = (numpy.sum(signal[index-samples//2:(index+samples//2)]))/samples
+         
+    #Borders of the signal
+    
+    signal_ma[0:samples//2] = 0
+    signal_ma[len(signal)-samples//2:len(signal)] = 0
+    signal_ma=signal_ma/signal_ma.max()
+    
+    return (signal_ma)
+#%%
