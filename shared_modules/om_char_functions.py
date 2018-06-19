@@ -11,7 +11,6 @@ import multiprocessing as mp
 import matplotlib.pyplot as plt
 from scipy import stats
 
-ms_data=obspy.read("project_files/26972.16.10.31.23.32.00.dat")
 #%% FUNCTIONS FOR KURTOSIS
 ##############################################################################
 def kurt_1d(signal_1d,samples):
@@ -40,6 +39,23 @@ def kurt_nd(signal_nd, samples):
     for index in range(len(signal_nd)):
         kurt_array[index].data=kurt_1d(signal_1d=signal_nd[index].data,samples=samples)
     return(kurt_array)
+
+##############################################################################
+def kurt_nd_positive_diff(signal_nd, samples):
+    """
+    Get the positive part of the kurt diff
+    """
+    signal_nd_diff = kurt_nd(signal_nd, samples)
+    signal_nd_diff = signal_nd_diff.differentiate()
+    
+    """ No need of positive-only for while
+    
+    for channel in range(len(signal_nd_diff)):
+        for signal_sample in range(len(signal_nd_diff[0])):     
+            if signal_nd_diff[channel].data[signal_sample] < 0:
+                signal_nd_diff[channel].data[signal_sample] = 0
+    """
+    return(signal_nd_diff)
 
 #%% FUNCTIONS FOR STREAM AND DF EXCHANGE
 ##############################################################################

@@ -70,3 +70,4 @@ def mean_sec_n_vec(catalog_events,catalog_sp):
 catalog_events.to_csv('project_files/catalog_events_n_time.csv', sep=',', line_terminator='\n', index=False)
 # At this point I've merged the catalog of file names and SP time (and save it for backup)
 
+#%%
