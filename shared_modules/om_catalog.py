@@ -11,6 +11,9 @@ This module contains tools for deal with catalog of microseismic files
 
 #%% Load libs
 import pandas, obspy, numpy
+from tqdm import tqdm
+from shutil import copyfile
+
 
 
 #%%
@@ -94,7 +97,7 @@ def time_window2file_name(time2search,file_catalog):
     return(file_list)
     
 #%%
-def time2file_name(input_time,sec_before,sec_after,catalog_time_n_files):
+def time2file_name_v2(input_time,sec_before,sec_after,catalog_time_n_files):
     """
     Created on May 31 01:20, Last update on May 31 01:25
     Used on project(s): GRP_repicking
@@ -137,3 +140,45 @@ def time2file_name(input_time,sec_before,sec_after,catalog_time_n_files):
 
 # Consult file name
 #file_name=search_time_into_catalog(time2search,file_catalog)
+
+#%%
+def copy_files_from_catalog(catalog,src_folder,dst_folder):
+    """
+    Copy all files into the catalog.file_name from src_folder to dst_folder
+    """
+    for file_index in tqdm(range(len(catalog))):
+        src=src_folder + str(catalog.file_name[file_index])
+        dst=dst_folder + str(catalog.file_name[file_index])
+        copyfile(src, dst)
+    print('Done!')
+    return()
+
+#%%
+def slice_catalog_by_day(catalog,attach_previous_file):
+    """
+    Slice main catalog into days and export as new csv. Append last file from previous catalog
+    to the beggining of the catalog for days != of the first one
+    """
+    # Calculate day of the year for each file name into the catalog
+    
+    catalog['date_time2']=pandas.to_datetime(catalog['date_time'])
+    catalog['day']=catalog['date_time2'].apply(lambda x: x.dayofyear)
+
+    days=list(set(catalog.day))
+
+    for day_index in range(len(days)):
+        catalog_sliced = catalog.copy()
+        catalog_sliced = catalog_sliced[catalog_sliced.day==days[day_index]]
+    
+        if day_index !=0 and attach_previous_file == True:
+            catalog_sliced_aux = catalog.copy()
+            catalog_sliced_aux = catalog_sliced_aux[catalog_sliced_aux.day==days[day_index-1]]
+            catalog_sliced_aux=catalog_sliced_aux.tail(1)
+            catalog_sliced=pandas.concat([catalog_sliced_aux,catalog_sliced],ignore_index=True)
+            
+        catalog_sliced=catalog_sliced.drop('date_time2',axis=1)
+        catalog_sliced.to_csv('catalog_d'+str(days[day_index])+'.csv',sep=',',line_terminator='\n', index=False)
+
+    return()
+#catalog=pandas.read_csv('catalog_time_n_files.csv')
+#slice_catalog_by_day(catalog,attach_previous_file=True)
