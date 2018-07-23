@@ -177,3 +177,42 @@ def load_sequential_files(files2load, input_sec, sec_before, sec_after,bandpass_
     ms_data.filter('bandpass', freqmin=bandpass_freqs[0], freqmax=bandpass_freqs[1], corners=4, zerophase=True)
     
     return(ms_data)    
+
+#%% ###########################################################################
+# Developed for PED_ES_workflow  - Mid Jul 2018
+def load_sequential_border(files2load,sec_file2,bandpass_freqs,folder):
+    """
+    Created on Jul 15
+    Used on project(s): PED_ES_workflow  - Mid Jul 2018
+
+    This module is used to quickly import for two sequential files (with just slice of second file)
+    concatenate, slice and bandpass filter them.
+
+    INPUTS:
+    files2load: list of file names to load (1 or 2 elements)
+    sec_file2: number of seconds of second files to preserve on slicing
+    folder: the path to the SEG2, SGY or DAT files
+    bandpass_freqs: list of two integers to use as bandpass filter (in Hz). Ex: [30,200]
+
+    OUTPUT:
+    ms_data: waveforms filtered and sliced
+    """    
+    
+    # Load single or both files
+    ms_data=obspy.read(folder+files2load[0])
+    start_time1 = ms_data[0].stats.starttime
+
+    if len(files2load)==2:
+        ms_data2=obspy.read(folder+files2load[1])       
+        start_time2 = ms_data2[0].stats.starttime
+        
+        for channel in range(len(ms_data)):
+            ms_data[channel] += ms_data2[channel]
+
+        # Slice
+        ms_data=ms_data.slice(start_time1, start_time2 + sec_file2)
+    
+    # Filter
+    ms_data.filter('bandpass', freqmin=bandpass_freqs[0], freqmax=bandpass_freqs[1], corners=4, zerophase=True)
+    
+    return(ms_data)    
