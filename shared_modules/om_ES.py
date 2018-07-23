@@ -81,6 +81,37 @@ def peak_properties(es_mavg,peaks_position,start_time,delta_time,SNR_threshold,w
 ###############################################################################
 
 
+def peak_properties_v2(es_mavg,peaks_position,start_time,delta_time,SNR_threshold,width_min,width_max):
+    """
+    Calculates the SNR and Width of the peak. Then decide if peak is into the defined parameters range.
+    
+    These loops finds the left and right indexes where the ES curve reaches the threshold
+    """
+    for index in range(peaks_position,len(es_mavg),1):
+        right_index = len(es_mavg)
+        if (es_mavg[index] <= SNR_threshold): #The ast part includes signal border as well
+            right_index = index
+            break
+
+    for index in range(peaks_position,-1,-1): # Runs loop backward until zero
+        left_index = 0
+        if (es_mavg[index] <= SNR_threshold):
+            left_index=index
+            break
+
+    peak_time = start_time + peaks_position*delta_time
+    snr = es_mavg[peaks_position]/es_mavg.mean()
+    width = (right_index - left_index)*delta_time
+    
+    #print("============",SNR,peak_time,width)
+    
+    if (snr >= SNR_threshold) and (width >= width_min) and (width <= width_max):
+        return([True,snr,peak_time,width])
+    else:
+        return([False,None,None,None])
+###############################################################################
+
+
 def detect_peaks(x, mph=None, mpd=1, threshold=0, edge='rising',
                  kpsh=False, valley=False, show=False, ax=None):
 
