@@ -8,7 +8,7 @@ Created on Thu Jun 14 04:30:48 2018
 Functions for microseismic event detection based on Energy-Stacking 
 """
 #%%
-import pandas, numpy
+import pandas, numpy, obspy
 
 #%% Characteristic functions 
 def cf_es_selec_gph(ms_data,catalog_gph_3c):
@@ -26,6 +26,27 @@ def cf_es_selec_gph(ms_data,catalog_gph_3c):
             es=numpy.add(es,numpy.square(ms_data[catalog_gph_3c.ch_h1[gph_index]].data))
             es=numpy.add(es,numpy.square(ms_data[catalog_gph_3c.ch_h2[gph_index]].data))
     return(es)
+###############################################################################
+
+def cf_es_selec_gph_v2(ms_data,catalog_gph, normalize=False):
+    """
+    Module for energy stack based on a list of selected geophones.
+    Builded on top of a deep copy of first channel.
+    """
+    
+    ms_data_energy = obspy.core.stream.Stream(traces=[ms_data[catalog_gph.ch_z.values[0]]]) # Deep copy of first trace
+    ms_data_energy[0].data = ms_data_energy[0].data*0 # trace zeroed for storing Energy Stack info
+    
+    if normalize==True:
+        ms_data=ms_data.normalize()
+        
+    # Energy stack calculation for valid gph only
+    for gph_index in range(len(catalog_gph)):
+        if catalog_gph.valid_gph[gph_index] == True:
+            ms_data_energy[0].data = numpy.add(ms_data_energy[0].data,numpy.add(numpy.square(ms_data[catalog_gph.ch_z[gph_index]].data),numpy.add(numpy.square(ms_data[catalog_gph.ch_h1[gph_index]].data),numpy.square(ms_data[catalog_gph.ch_h2[gph_index]].data))))
+   
+    return(ms_data_energy)
+
 ###############################################################################
 
 def cf_moving_avg(signal,samples=50):
