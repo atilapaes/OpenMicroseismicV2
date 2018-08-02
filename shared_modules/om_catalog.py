@@ -146,6 +146,8 @@ def copy_files_from_catalog(catalog,src_folder,dst_folder):
     """
     Copy all files into the catalog.file_name from src_folder to dst_folder
     """
+    from tqdm import tqdm
+    from shutil import copyfile
     for file_index in tqdm(range(len(catalog))):
         src=src_folder + str(catalog.file_name[file_index])
         dst=dst_folder + str(catalog.file_name[file_index])
